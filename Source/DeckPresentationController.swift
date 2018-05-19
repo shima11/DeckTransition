@@ -21,7 +21,15 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     /// object and does not hold a reference to it, there is no issue of a
     /// circular dependency here.
     var transitioningDelegate: DeckTransitioningDelegate?
-    
+
+    fileprivate var elasticThreshold: CGFloat = 120
+    fileprivate var dismissThreshold: CGFloat = 120
+    fileprivate var translationFactor: CGFloat = 0.5
+
+//    fileprivate let defaultElasticThreshold: CGFloat = 120
+//    fileprivate let defaultDismissThreshold: CGFloat = 120
+//    fileprivate let defaultTranslateFactor: CGFloat = 0.5
+
     // MARK: - Private variables
     
     private var isSwipeToDismissGestureEnabled = true
@@ -55,10 +63,12 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
                      presentAnimation: (() -> ())? = nil,
                      presentCompletion: ((Bool) ->())? = nil,
                      dismissAnimation: (() -> ())? = nil,
-                     dismissCompletion: ((Bool) -> ())? = nil) {
+                     dismissCompletion: ((Bool) -> ())? = nil
+                     ) {
+
         self.init(presentedViewController: presentedViewController,
-                  presenting: presentingViewController)
-        
+                  presenting: presentingViewController, isSwipeToDismissGestureEnabled: true)
+
         self.isSwipeToDismissGestureEnabled = isSwipeToDismissGestureEnabled
         self.presentAnimation = presentAnimation
         self.presentCompletion = presentCompletion
@@ -607,12 +617,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     /// - parameter translation: The translation of the user's pan gesture in
     ///   the container view in the vertical direction
     private func updatePresentedViewForTranslation(inVerticalDirection translation: CGFloat) {
-        
-        let elasticThreshold: CGFloat = 120
-        let dismissThreshold: CGFloat = 240
-        
-        let translationFactor: CGFloat = 1/2
-        
+
         /// Nothing happens if the pan gesture is performed from bottom
         /// to top i.e. if the translation is negative
         if translation >= 0 {
