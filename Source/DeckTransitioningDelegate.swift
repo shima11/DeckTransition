@@ -36,10 +36,12 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     private let elasticThreshold: CGFloat
     private let dismissThreshold: CGFloat
     private let translationFactor: CGFloat
+    private let velocityThreshold: CGFloat
 
     public static let defaultElasticThreshold: CGFloat = 120
-    public static let defaultDismissThreshold: CGFloat = 120
-    public static let defaultTranslationFactor: CGFloat = 0.5
+    public static let defaultDismissThreshold: CGFloat = 100
+    public static let defaultTranslationFactor: CGFloat = 0.8
+    public static let defaultVelocityThreshold: CGFloat = 300
 
     // MARK: - Initializers
     
@@ -70,8 +72,10 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
                       dismissCompletion: ((Bool) -> ())? = nil,
                       elasticThreshold: CGFloat = DeckTransitioningDelegate.defaultElasticThreshold,
                       dismissThreshold: CGFloat = DeckTransitioningDelegate.defaultDismissThreshold,
-                      translationFactor: CGFloat = DeckTransitioningDelegate.defaultTranslationFactor
+                      translationFactor: CGFloat = DeckTransitioningDelegate.defaultTranslationFactor,
+                      velocityThreshold: CGFloat = DeckTransitioningDelegate.defaultVelocityThreshold
                     ) {
+
         self.isSwipeToDismissEnabled = isSwipeToDismissEnabled
         self.presentDuration = presentDuration?.doubleValue
         self.presentAnimation = presentAnimation
@@ -82,6 +86,7 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
         self.elasticThreshold = elasticThreshold
         self.dismissThreshold = dismissThreshold
         self.translationFactor = translationFactor
+        self.velocityThreshold = velocityThreshold
     }
     
     // MARK: - UIViewControllerTransitioningDelegate
@@ -133,7 +138,8 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
             dismissCompletion: dismissCompletion,
             elasticThreshold: elasticThreshold,
             dismissThreshold: dismissThreshold,
-            translationFactor: translationFactor
+            translationFactor: translationFactor,
+            velocityThreshold: velocityThreshold
         )
         presentationController.transitioningDelegate = self
         return presentationController

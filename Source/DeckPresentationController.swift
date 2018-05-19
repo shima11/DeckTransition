@@ -25,6 +25,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     fileprivate let elasticThreshold: CGFloat
     fileprivate let dismissThreshold: CGFloat
     fileprivate let translationFactor: CGFloat
+    fileprivate let velocityThreshold: CGFloat
 
     // MARK: - Private variables
     
@@ -62,12 +63,14 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
                      dismissCompletion: ((Bool) -> ())? = nil,
                      elasticThreshold: CGFloat,
                      dismissThreshold: CGFloat,
-                     translationFactor: CGFloat
+                     translationFactor: CGFloat,
+                     velocityThreshold: CGFloat
                      ) {
 
         self.elasticThreshold = elasticThreshold
         self.dismissThreshold = dismissThreshold
         self.translationFactor = translationFactor
+        self.velocityThreshold = velocityThreshold
 
         super.init(presentedViewController: presentedViewController,
                   presenting: presentingViewController)
@@ -593,14 +596,23 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             } else {
                 gestureRecognizer.setTranslation(.zero, in: presentedView)
             }
-        
+            break
+
         case .ended:
-            UIView.animate(
-                withDuration: 0.25,
-                animations: {
-                    self.presentedView?.transform = .identity
+
+            let translation = gestureRecognizer.translation(in: presentedView)
+            let velocity = gestureRecognizer.velocity(in: self.backgroundView)
+            if translation.y >= dismissThreshold || velocity.y > velocityThreshold {
+                presentedViewController.dismiss(animated: true, completion: nil)
+            } else {
+                UIView.animate(
+                    withDuration: 0.25,
+                    animations: {
+                        self.presentedView?.transform = .identity
                 })
+            }
             scrollViewUpdater = nil
+            gestureRecognizer.setTranslation(.zero, in: presentedView)
 
         default: break
         
@@ -636,10 +648,6 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             }()
             
             presentedView?.transform = CGAffineTransform(translationX: 0, y: translationForModal)
-            
-            if translation >= dismissThreshold {
-                presentedViewController.dismiss(animated: true, completion: nil)
-            }
         }
     }
     
