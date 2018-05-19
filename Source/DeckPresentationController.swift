@@ -22,13 +22,9 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     /// circular dependency here.
     var transitioningDelegate: DeckTransitioningDelegate?
 
-    fileprivate var elasticThreshold: CGFloat = 120
-    fileprivate var dismissThreshold: CGFloat = 120
-    fileprivate var translationFactor: CGFloat = 0.5
-
-//    fileprivate let defaultElasticThreshold: CGFloat = 120
-//    fileprivate let defaultDismissThreshold: CGFloat = 120
-//    fileprivate let defaultTranslateFactor: CGFloat = 0.5
+    fileprivate let elasticThreshold: CGFloat
+    fileprivate let dismissThreshold: CGFloat
+    fileprivate let translationFactor: CGFloat
 
     // MARK: - Private variables
     
@@ -57,17 +53,25 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
 	
     // MARK: - Initializers
     
-    convenience init(presentedViewController: UIViewController,
+    init(presentedViewController: UIViewController,
                      presenting presentingViewController: UIViewController?,
                      isSwipeToDismissGestureEnabled: Bool,
                      presentAnimation: (() -> ())? = nil,
                      presentCompletion: ((Bool) ->())? = nil,
                      dismissAnimation: (() -> ())? = nil,
-                     dismissCompletion: ((Bool) -> ())? = nil
+                     dismissCompletion: ((Bool) -> ())? = nil,
+                     elasticThreshold: CGFloat,
+                     dismissThreshold: CGFloat,
+                     translationFactor: CGFloat
                      ) {
 
-        self.init(presentedViewController: presentedViewController,
-                  presenting: presentingViewController, isSwipeToDismissGestureEnabled: true)
+        self.elasticThreshold = elasticThreshold
+        self.dismissThreshold = dismissThreshold
+        self.translationFactor = translationFactor
+
+        super.init(presentedViewController: presentedViewController,
+                  presenting: presentingViewController)
+
 
         self.isSwipeToDismissGestureEnabled = isSwipeToDismissGestureEnabled
         self.presentAnimation = presentAnimation

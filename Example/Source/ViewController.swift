@@ -34,7 +34,12 @@ class ViewController: UIViewController {
     }
     
     @objc func viewWasTapped() {
-        let modal = ModalViewController()
+
+        let modal = ModalViewController(
+            elastic: Float(DeckTransitioningDelegate.defaultElasticThreshold),
+            dismiss: Float(DeckTransitioningDelegate.defaultDismissThreshold),
+            factor: Float(DeckTransitioningDelegate.defaultTranslationFactor)
+        )
         let transitionDelegate = DeckTransitioningDelegate()
         modal.transitioningDelegate = transitionDelegate
         modal.modalPresentationStyle = .custom

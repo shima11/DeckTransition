@@ -33,7 +33,14 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     private let dismissDuration: TimeInterval?
     private let dismissAnimation: (() -> ())?
     private let dismissCompletion: ((Bool) -> ())?
-    
+    private let elasticThreshold: CGFloat
+    private let dismissThreshold: CGFloat
+    private let translationFactor: CGFloat
+
+    public static let defaultElasticThreshold: CGFloat = 120
+    public static let defaultDismissThreshold: CGFloat = 120
+    public static let defaultTranslationFactor: CGFloat = 0.5
+
     // MARK: - Initializers
     
     /// Returns a transitioning delegate to perform a Deck transition. All
@@ -60,7 +67,11 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
                       presentCompletion: ((Bool) -> ())? = nil,
                       dismissDuration: NSNumber? = nil,
                       dismissAnimation: (() -> ())? = nil,
-                      dismissCompletion: ((Bool) -> ())? = nil) {
+                      dismissCompletion: ((Bool) -> ())? = nil,
+                      elasticThreshold: CGFloat = DeckTransitioningDelegate.defaultElasticThreshold,
+                      dismissThreshold: CGFloat = DeckTransitioningDelegate.defaultDismissThreshold,
+                      translationFactor: CGFloat = DeckTransitioningDelegate.defaultTranslationFactor
+                    ) {
         self.isSwipeToDismissEnabled = isSwipeToDismissEnabled
         self.presentDuration = presentDuration?.doubleValue
         self.presentAnimation = presentAnimation
@@ -68,6 +79,9 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
         self.dismissDuration = dismissDuration?.doubleValue
         self.dismissAnimation = dismissAnimation
         self.dismissCompletion = dismissCompletion
+        self.elasticThreshold = elasticThreshold
+        self.dismissThreshold = dismissThreshold
+        self.translationFactor = translationFactor
     }
     
     // MARK: - UIViewControllerTransitioningDelegate
@@ -116,7 +130,11 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
             presentAnimation: presentAnimation,
             presentCompletion: presentCompletion,
             dismissAnimation: dismissAnimation,
-            dismissCompletion: dismissCompletion)
+            dismissCompletion: dismissCompletion,
+            elasticThreshold: elasticThreshold,
+            dismissThreshold: dismissThreshold,
+            translationFactor: translationFactor
+        )
         presentationController.transitioningDelegate = self
         return presentationController
     }
